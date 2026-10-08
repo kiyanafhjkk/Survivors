@@ -1,0 +1,2608 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Survivor.exe</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --desktop:#5d858a;
+  --desktop-dark:#456c72;
+  --paper:#e8e7df;
+  --paper2:#f5f4ed;
+  --white:#ffffff;
+  --ink:#17252b;
+  --muted:#66757a;
+  --line:#87959a;
+  --darkline:#30434a;
+  --teal:#397b83;
+  --teal-dark:#245b63;
+  --blue:#3f6975;
+  --red:#a63e3e;
+  --yellow:#d1b45c;
+  --shadow:rgba(18,34,40,.42);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  min-height:100%;
+}
+
+body{
+  background:
+    radial-gradient(circle at 50% 35%,rgba(255,255,255,.13),transparent 45%),
+    linear-gradient(135deg,var(--desktop),var(--desktop-dark));
+  color:var(--ink);
+  font-family:"Vazirmatn",Tahoma,sans-serif;
+  font-size:15px;
+  line-height:1.55;
+  overflow-x:hidden;
+}
+
+/* subtle old monitor texture */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:100;
+  opacity:.12;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,.25) 0 1px,
+      transparent 1px 4px
+    );
+}
+
+/* =========================
+   DESKTOP
+========================= */
+
+#desktop{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+}
+
+.desktop-icon{
+  position:absolute;
+  width:72px;
+  text-align:center;
+  color:#fff;
+  text-shadow:1px 1px 1px #23383c;
+  font-size:11px;
+}
+
+.desktop-icon svg{
+  display:block;
+  width:34px;
+  height:34px;
+  margin:0 auto 3px;
+  filter:drop-shadow(2px 2px 0 rgba(0,0,0,.25));
+}
+
+#di-home{
+  right:18px;
+  top:24px;
+}
+
+#di-data{
+  right:18px;
+  top:108px;
+}
+
+#di-settings{
+  right:18px;
+  top:192px;
+}
+
+/* =========================
+   TASKBAR
+========================= */
+
+#taskbar{
+  position:fixed;
+  z-index:50;
+  left:0;
+  right:0;
+  bottom:0;
+  height:38px;
+  background:#c8c9c2;
+  border-top:2px solid #fff;
+  box-shadow:
+    inset 0 1px 0 #dfe0da,
+    0 -2px 0 rgba(0,0,0,.15);
+  display:flex;
+  align-items:center;
+  padding:3px 5px;
+  direction:ltr;
+}
+
+.start{
+  height:30px;
+  min-width:70px;
+  background:#d7d8d2;
+  border:2px solid;
+  border-color:#fff #5b6162 #5b6162 #fff;
+  color:#18272c;
+  font-weight:700;
+  font-size:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+}
+
+.start:active{
+  border-color:#5b6162 #fff #fff #5b6162;
+}
+
+.task-window{
+  margin-left:5px;
+  height:28px;
+  min-width:145px;
+  background:#d7d8d2;
+  border:2px solid;
+  border-color:#697174 #fff #fff #697174;
+  display:flex;
+  align-items:center;
+  padding:0 8px;
+  font-size:11px;
+}
+
+.clock{
+  margin-left:auto;
+  height:28px;
+  padding:4px 9px;
+  border:2px solid;
+  border-color:#737a7c #fff #fff #737a7c;
+  font-size:10px;
+  min-width:74px;
+  text-align:center;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+main{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:25px 90px 65px 20px;
+}
+
+/* =========================
+   WINDOWS
+========================= */
+
+.win{
+  display:none;
+  width:100%;
+  max-width:470px;
+  background:var(--paper);
+  border:2px solid;
+  border-color:#fff #27363b #27363b #fff;
+  box-shadow:
+    5px 5px 0 rgba(20,35,40,.35),
+    12px 12px 25px rgba(0,0,0,.15);
+}
+
+.win.on{
+  display:block;
+  animation:openWindow .18s ease-out;
+}
+
+@keyframes openWindow{
+  from{
+    opacity:0;
+    transform:scale(.97);
+  }
+  to{
+    opacity:1;
+    transform:scale(1);
+  }
+}
+
+/* title bar */
+
+.tb{
+  min-height:27px;
+  background:
+    linear-gradient(
+      90deg,
+      var(--teal-dark),
+      var(--teal)
+    );
+  color:#fff;
+  padding:3px 5px 3px 8px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  direction:ltr;
+  font-size:12px;
+  font-weight:700;
+}
+
+.tb-title{
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+.window-buttons{
+  display:flex;
+  gap:3px;
+}
+
+.wb{
+  width:17px;
+  height:17px;
+  background:#d8d9d2;
+  color:#18272c;
+  border:1px solid;
+  border-color:#fff #465257 #465257 #fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  line-height:1;
+  font-weight:700;
+}
+
+.bd{
+  padding:15px;
+  background:
+    linear-gradient(
+      135deg,
+      #eeeeE8,
+      #dfdfd8
+    );
+}
+
+/* =========================
+   COMMON UI
+========================= */
+
+h1,h2{
+  margin:0 0 8px;
+  line-height:1.3;
+}
+
+h1{
+  font-size:24px;
+}
+
+h2{
+  font-size:21px;
+}
+
+p{
+  margin:0 0 10px;
+}
+
+.dim{
+  color:#5e6d72;
+}
+
+.small{
+  font-size:11px;
+}
+
+.btn{
+  font:inherit;
+  font-size:12px;
+  color:var(--ink);
+  background:#dedfd9;
+  border:2px solid;
+  border-color:#fff #4f595c #4f595c #fff;
+  padding:5px 16px;
+  cursor:pointer;
+  box-shadow:none;
+}
+
+.btn:hover:not(:disabled){
+  background:#cfd1cb;
+}
+
+.btn:active:not(:disabled){
+  border-color:#4f595c #fff #fff #4f595c;
+  padding-top:6px;
+  padding-bottom:4px;
+}
+
+.btn:disabled{
+  opacity:.4;
+  cursor:not-allowed;
+}
+
+.wide{
+  display:block;
+  width:100%;
+  text-align:center;
+}
+
+.end{
+  display:flex;
+  justify-content:flex-start;
+  margin-top:14px;
+}
+
+input[type=text]{
+  font:inherit;
+  width:100%;
+  background:#fff;
+  border:2px solid;
+  border-color:#687276 #fff #fff #687276;
+  padding:6px 8px;
+  margin:3px 0 12px;
+  color:var(--ink);
+  direction:rtl;
+}
+
+input[type=text]:focus{
+  outline:1px solid var(--teal);
+}
+
+/* =========================
+   SYSTEM BOX
+========================= */
+
+.system-box{
+  background:#f8f8f3;
+  border:2px solid;
+  border-color:#687276 #fff #fff #687276;
+  padding:9px;
+  margin:10px 0;
+}
+
+.system-head{
+  font-family:monospace;
+  font-size:10px;
+  direction:ltr;
+  text-align:left;
+  color:#4d666d;
+  border-bottom:1px solid #bdc1bd;
+  padding-bottom:5px;
+  margin-bottom:7px;
+}
+
+.logline{
+  font-family:monospace;
+  direction:ltr;
+  text-align:left;
+  font-size:10px;
+  color:#52676c;
+  margin:2px 0;
+}
+
+.ok{
+  color:#31735a;
+}
+
+.warn{
+  color:#9a6e25;
+}
+
+.no{
+  color:#a83d3d;
+}
+
+/* =========================
+   PAGE 0
+========================= */
+
+.verify-window{
+  max-width:430px;
+}
+
+.robot-check{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  background:#f8f8f4;
+  border:2px solid;
+  border-color:#6b7477 #fff #fff #6b7477;
+  padding:10px;
+  cursor:pointer;
+  font:inherit;
+  text-align:right;
+}
+
+.robot-check:hover{
+  background:#efefe9;
+}
+
+.cb{
+  flex:none;
+  width:17px;
+  height:17px;
+  background:#fff;
+  border:2px solid;
+  border-color:#60696c #fff #fff #60696c;
+  position:relative;
+}
+
+.cb.checked::after{
+  content:"✓";
+  position:absolute;
+  left:1px;
+  top:-5px;
+  color:#183b42;
+  font-size:17px;
+  font-weight:700;
+}
+
+.faces{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin:9px 0;
+}
+
+.face{
+  white-space:pre;
+  text-align:center;
+  direction:ltr;
+  font-family:monospace;
+  font-size:13px;
+  line-height:1.15;
+  min-height:100px;
+  background:#f7f7f2;
+  border:2px solid;
+  border-color:#6c7578 #fff #fff #6c7578;
+  cursor:pointer;
+  padding:12px 4px;
+  color:#24353b;
+}
+
+.face:hover,
+.face.sel{
+  background:#dce8e8;
+  outline:1px solid var(--teal);
+}
+
+/* =========================
+   PAGE 1
+========================= */
+
+.banner{
+  position:relative;
+  border:2px solid;
+  border-color:#687276 #fff #fff #687276;
+  margin-bottom:12px;
+  background:#24373c;
+  overflow:hidden;
+}
+
+.banner svg{
+  width:100%;
+  display:block;
+  height:170px;
+}
+
+.banner-text{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:30px 10px 7px;
+  color:#fff;
+  font-size:15px;
+  background:linear-gradient(
+    transparent,
+    rgba(20,35,40,.9)
+  );
+}
+
+/* =========================
+   PAGE 2-4 OPTIONS
+========================= */
+
+.row{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:9px;
+  width:100%;
+  background:#f6f6f1;
+  border:2px solid;
+  border-color:#697376 #fff #fff #697376;
+  padding:6px 7px;
+  cursor:pointer;
+  font:inherit;
+  color:var(--ink);
+  text-align:right;
+  margin-bottom:5px;
+}
+
+.row:hover{
+  background:#e8e9e3;
+}
+
+.row.sel{
+  background:#d7e5e5;
+  border-color:#46727a #fff #fff #46727a;
+}
+
+.row.sel .cb{
+  background:var(--teal);
+  border-color:#315b62;
+}
+
+.row.sel .cb::after{
+  content:"✓";
+  color:#fff;
+  position:absolute;
+  left:1px;
+  top:-5px;
+  font-size:15px;
+}
+
+.ic{
+  flex:none;
+  width:29px;
+  height:29px;
+}
+
+.ic svg{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.row b{
+  font-size:13px;
+}
+
+.rv{
+  display:none;
+  flex-basis:100%;
+  padding:3px 43px 2px 0;
+  font-size:11px;
+  color:#657378;
+}
+
+.row.sel .rv{
+  display:block;
+}
+
+.st{
+  direction:ltr;
+  color:var(--teal);
+  letter-spacing:1px;
+  font-size:16px;
+}
+
+/* =========================
+   CHARACTERS
+========================= */
+
+.cg{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+}
+
+.ch{
+  background:#f5f5ef;
+  border:2px solid;
+  border-color:#697376 #fff #fff #697376;
+  padding:5px;
+  cursor:pointer;
+  font:inherit;
+  color:var(--ink);
+  text-align:center;
+}
+
+.ch:hover{
+  background:#e9eae4;
+}
+
+.ch.sel{
+  grid-column:1/-1;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  text-align:right;
+  background:#d7e5e5;
+  padding:7px;
+}
+
+.pt{
+  position:relative;
+  aspect-ratio:4/5;
+  overflow:hidden;
+  background:#9fb4b7;
+  width:100%;
+  filter:grayscale(.6) sepia(.25);
+}
+
+.pt svg,
+.pt img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.pt::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,.12) 0 1px,
+    transparent 1px 4px
+  );
+}
+
+.ch.sel .pt{
+  width:110px;
+  flex:none;
+}
+
+.ch .n{
+  font-size:12px;
+  font-weight:700;
+  line-height:1.3;
+  padding-top:4px;
+}
+
+.ch.sel .n{
+  font-size:17px;
+}
+
+.ch .rv{
+  display:none;
+  font-size:11px;
+  color:#627176;
+}
+
+.ch.sel .rv{
+  display:block;
+}
+
+/* =========================
+   PAGE 6 RESULT
+========================= */
+
+.assessment{
+  max-width:500px;
+}
+
+.assessment-header{
+  background:#d7d8d1;
+  border:2px solid;
+  border-color:#fff #596366 #596366 #fff;
+  padding:8px;
+  font-family:monospace;
+  direction:ltr;
+  text-align:left;
+  font-size:11px;
+  margin-bottom:10px;
+}
+
+.bar{
+  height:16px;
+  border:2px solid;
+  border-color:#626b6e #fff #fff #626b6e;
+  background:#fff;
+  margin:10px 0;
+  padding:1px;
+}
+
+.bar i{
+  display:block;
+  height:100%;
+  width:0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #397b83 0 9px,
+      #5b949a 9px 11px
+    );
+  transition:width 2.2s linear;
+}
+
+.score-panel{
+  background:#f8f8f3;
+  border:2px solid;
+  border-color:#697376 #fff #fff #697376;
+  padding:14px;
+  text-align:center;
+}
+
+.score{
+  font-family:monospace;
+  font-size:46px;
+  font-weight:700;
+  color:#285e66;
+  line-height:1;
+  margin:4px 0 3px;
+  direction:ltr;
+}
+
+.score-percent{
+  font-size:11px;
+  color:#68787d;
+  direction:ltr;
+}
+
+.verdict{
+  margin:10px 0 3px;
+  font-size:24px;
+  font-weight:700;
+}
+
+.data-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+  margin-top:12px;
+}
+
+.data-card{
+  background:#eeeeE8;
+  border:2px solid;
+  border-color:#747d80 #fff #fff #747d80;
+  padding:7px;
+  min-width:0;
+}
+
+.data-card .label{
+  font-family:monospace;
+  font-size:8px;
+  color:#708085;
+  direction:ltr;
+}
+
+.data-card .name{
+  font-size:11px;
+  font-weight:700;
+  margin:3px 0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.data-card .stars{
+  color:#397b83;
+  direction:ltr;
+  font-size:11px;
+}
+
+.status{
+  display:inline-block;
+  padding:4px 9px;
+  background:#d8e7df;
+  border:1px solid #789b8b;
+  color:#39705a;
+  font-family:monospace;
+  font-size:10px;
+  direction:ltr;
+}
+
+.status.fail{
+  background:#eadada;
+  border-color:#ae7777;
+  color:#9b4444;
+}
+
+.system-result{
+  margin-top:11px;
+  padding:8px;
+  background:#f8f8f3;
+  border:2px solid;
+  border-color:#697376 #fff #fff #697376;
+  direction:ltr;
+  text-align:left;
+  font-family:monospace;
+  font-size:9px;
+  color:#68787c;
+}
+
+.result-actions{
+  display:flex;
+  gap:7px;
+  justify-content:flex-start;
+  margin-top:12px;
+}
+
+/* =========================
+   PAGE 7
+========================= */
+
+.location{
+  text-align:center;
+}
+
+.location-icon{
+  width:70px;
+  height:70px;
+  margin:4px auto 12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#e5e6e0;
+  border:2px solid;
+  border-color:#6c7578 #fff #fff #6c7578;
+  font-size:30px;
+  color:var(--teal-dark);
+}
+
+.location-link{
+  display:inline-block;
+  background:#dedfd9;
+  color:var(--ink);
+  text-decoration:none;
+  border:2px solid;
+  border-color:#fff #4f595c #4f595c #fff;
+  padding:6px 14px;
+  font-size:12px;
+}
+
+.location-link:hover{
+  background:#cfd1cb;
+}
+
+/* =========================
+   SHAKE
+========================= */
+
+.shake{
+  animation:shake .3s;
+}
+
+@keyframes shake{
+  25%{transform:translateX(-5px)}
+  75%{transform:translateX(5px)}
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:720px){
+
+  #desktop{
+    display:none;
+  }
+
+  main{
+    padding:55px 9px 55px;
+  }
+
+  .win{
+    max-width:100%;
+  }
+
+  .bd{
+    padding:12px;
+  }
+
+  .cg{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .data-grid{
+    grid-template-columns:1fr;
+  }
+
+  .banner svg{
+    height:145px;
+  }
+
+  .faces{
+    grid-template-columns:1fr 1fr;
+  }
+
+  #taskbar{
+    height:34px;
+  }
+
+  .task-window{
+    min-width:100px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{
+    animation:none!important;
+    transition:none!important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+
+<!-- =========================
+     DESKTOP
+========================= -->
+
+<div id="desktop">
+
+  <div class="desktop-icon" id="di-home">
+    <svg viewBox="0 0 16 16">
+      <rect x="3" y="2" width="10" height="11" fill="#e9e9e3"/>
+      <rect x="4" y="4" width="8" height="7" fill="#397b83"/>
+      <rect x="5" y="5" width="6" height="1" fill="#bde2e3"/>
+      <rect x="5" y="7" width="5" height="1" fill="#bde2e3"/>
+    </svg>
+    Home
+  </div>
+
+  <div class="desktop-icon" id="di-data">
+    <svg viewBox="0 0 16 16">
+      <rect x="2" y="4" width="12" height="10" fill="#d5d6cf"/>
+      <rect x="3" y="5" width="10" height="7" fill="#fff"/>
+      <rect x="4" y="2" width="6" height="3" fill="#e1c66c"/>
+    </svg>
+    Data
+  </div>
+
+  <div class="desktop-icon" id="di-settings">
+    <svg viewBox="0 0 16 16">
+      <rect x="3" y="3" width="10" height="10" fill="#d9dad3"/>
+      <rect x="5" y="5" width="6" height="6" fill="#397b83"/>
+      <rect x="6" y="6" width="4" height="4" fill="#d9dad3"/>
+    </svg>
+    Settings
+  </div>
+
+</div>
+
+
+<!-- =========================
+     TASKBAR
+========================= -->
+
+<div id="taskbar">
+  <div class="start">▣ Start</div>
+  <div class="task-window">▣ Survivor.exe</div>
+  <div class="clock" id="clock">10:24 PM</div>
+</div>
+
+
+<main>
+
+
+<!-- =====================================================
+     PAGE 0
+===================================================== -->
+
+<section class="win on verify-window" id="s0">
+
+  <div class="tb">
+    <span class="tb-title">Survivor.exe - Human Verification</span>
+
+    <div class="window-buttons">
+      <span class="wb">_</span>
+      <span class="wb">□</span>
+      <span class="wb">×</span>
+    </div>
+  </div>
+
+  <div class="bd">
+
+    <div class="system-head">
+      SURVIVOR.EXE // SECURITY CHECK
+    </div>
+
+    <h2>تأیید انسان بودن</h2>
+
+    <p class="dim small">
+      قبل از اجرای برنامه، باید هویت انسانی شما تأیید شود.
+    </p>
+
+    <div class="system-box">
+
+      <div class="logline">
+        &gt; SECURITY PROTOCOL: ACTIVE
+      </div>
+
+      <div class="logline">
+        &gt; AI DETECTION: ENABLED
+      </div>
+
+      <div class="logline warn">
+        &gt; HUMAN VERIFICATION REQUIRED
+      </div>
+
+    </div>
+
+    <div id="p0a">
+
+      <button class="robot-check" id="robot">
+
+        <span class="cb" id="rbox"></span>
+
+        <b>من ربات نیستم</b>
+
+      </button>
+
+    </div>
+
+
+    <div id="p0b" style="display:none">
+
+      <p class="small">
+        کدوم یکی انسان‌تر به نظر می‌رسه؟
+      </p>
+
+      <div class="faces">
+
+        <button class="face" data-h="0">[ o_o ]
+|=====|
+ |_|_|</button>
+
+        <button class="face" data-h="1">( ´･_･`)
+ /|   |\
+  /   \</button>
+
+      </div>
+
+      <p id="p0m" class="no"></p>
+
+      <div class="end">
+
+        <button class="btn" id="verify" disabled>
+          OK
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div id="p0c" style="display:none">
+
+      <div class="system-box">
+
+        <div class="logline">
+          &gt; ANALYZING HUMANITY...
+        </div>
+
+        <div class="logline">
+          &gt; CHECKING BEHAVIORAL PATTERNS...
+        </div>
+
+        <div class="logline ok">
+          &gt; PLEASE WAIT...
+        </div>
+
+      </div>
+
+      <div class="bar">
+        <i id="p0bar"></i>
+      </div>
+
+    </div>
+
+
+    <div id="p0d" style="display:none;text-align:center">
+
+      <h2 class="ok">✓ Verification Complete</h2>
+
+      <p class="dim">
+        انسان بودنت تأیید شد.
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     PAGE 1
+===================================================== -->
+
+<section class="win" id="s1">
+
+  <div class="tb">
+
+    <span class="tb-title">
+      Survivor.exe - Recruitment
+    </span>
+
+    <div class="window-buttons">
+      <span class="wb">_</span>
+      <span class="wb">□</span>
+      <span class="wb">×</span>
+    </div>
+
+  </div>
+
+  <div class="bd">
+
+    <div class="system-head">
+      // SYSTEM MESSAGE
+    </div>
+
+    <div class="banner">
+
+      <svg
+        viewBox="0 0 200 90"
+        shape-rendering="crispEdges"
+        id="city">
+      </svg>
+
+      <div class="banner-text">
+        هوش مصنوعی کنترل رو به دست گرفته.<br>
+        و حالا دنبال آدم‌هایی مثل توئه.
+      </div>
+
+    </div>
+
+    <h2>عضویت در گروه بازماندگان</h2>
+
+    <p>
+      برای عضویت در نظر گرفته شدی.
+      قبل از اینکه راهت بدیم، باید بدونیم از دستت چی برمیاد.
+    </p>
+
+    <div class="system-box">
+
+      <div class="logline">
+        &gt; AI CONTROL: <span class="no">ACTIVE</span>
+      </div>
+
+      <div class="logline">
+        &gt; SURVIVOR NETWORK: <span class="ok">ONLINE</span>
+      </div>
+
+      <div class="logline">
+        &gt; CANDIDATE: <span class="ok">SELECTED</span>
+      </div>
+
+    </div>
+
+    <p class="dim small">
+      راهنمای میدانی برای کسانی که قصد دارن انسان بمونن.
+    </p>
+
+    <button class="btn wide" data-next>
+      &gt; OPEN INVITATION
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     PAGE 2
+===================================================== -->
+
+<section class="win" id="s2">
+
+  <div class="tb">
+
+    <span class="tb-title">
+      Survivor.exe - Your Profile
+    </span>
+
+    <div class="window-buttons">
+      <span class="wb">_</span>
+      <span class="wb">□</span>
+      <span class="wb">×</span>
+    </div>
+
+  </div>
+
+  <div class="bd">
+
+    <div class="system-head">
+      // 01 / SUBJECT PROFILE
+    </div>
+
+    <h2>با کی طرفیم؟</h2>
+
+    <p class="dim small">
+      خودت رو چطور توصیف می‌کنی؟
+    </p>
+
+    <label class="dim small">
+      [ اسمت رو بنویس ]
+    </label>
+
+    <input
+      type="text"
+      id="nm"
+      maxlength="30"
+      autocomplete="off"
+    >
+
+    <div id="ident"></div>
+
+    <div class="end">
+
+      <button class="btn" id="n2" disabled>
+        NEXT →
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     PAGE 3
+===================================================== -->
+
+<section class="win" id="s3">
+
+  <div class="tb">
+
+    <span class="tb-title">
+      Survivor.exe - Tools
+    </span>
+
+    <div class="window-buttons">
+      <span class="wb">_</span>
+      <span class="wb">□</span>
+      <span class="wb">×</span>
+    </div>
+
+  </div>
+
+  <div class="bd">
+
+    <div class="system-head">
+      // 02 / SURVIVAL EQUIPMENT
+    </div>
+
+    <h2>ابزارت رو انتخاب کن</h2>
+
+    <p class="dim small">
+      چی با خودت می‌بری وقتی دیگه هیچ فروشگاهی وجود نداره؟
+    </p>
+
+    <div id="g3"></div>
+
+    <div class="end">
+
+      <button class="btn" id="n3" disabled>
+        NEXT →
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     PAGE 4
+===================================================== -->
+
+<section class="win" id="s4">
+
+  <div class="tb">
+
+    <span class="tb-title">
+      Survivor.exe - Skills
+    </span>
+
+    <div class="window-buttons">
+      <span class="wb">_</span>
+      <span class="wb">□</span>
+      <span class="wb">×</span>
+    </div>
+
+  </div>
+
+  <div class="bd">
+
+    <div class="system-head">
+      // 03 / SKILL DATABASE
+    </div>
+
+    <h2>مهارتت رو انتخاب کن</h2>
+
+    <p class="dim small">
+      چه چیزی بلدی که واقعاً توی این شرایط به درد بخوره؟
+    </p>
+
+    <div id="g4"></div>
+
+    <div class="end">
+
+      <button class="btn" id="n4" disabled>
+        NEXT →
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     PAGE 5
+===================================================== -->
+
+<section class="win" id="s5">
+
+  <div class="tb">
+
+    <span class="tb-title">
+      Survivor.exe - Characters
+    </span>
+
+    <div class="window-buttons">
+      <span class="wb">_</span>
+      <span class="wb">□</span>
+      <span class="wb">×</span>
+    </div>
+
+  </div>
+
+  <div class="bd">
+
+    <div class="system-head">
+      // 04 / SURVIVOR DATABASE
+    </div>
+
+    <h2>شخصیتت رو انتخاب کن</h2>
+
+    <p class="dim small">
+      کدوم بازمانده بیشتر شبیه توئه؟
+    </p>
+
+    <div class="cg" id="g5"></div>
+
+    <div class="end">
+
+      <button class="btn" id="n5" disabled>
+        NEXT →
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     PAGE 6
+===================================================== -->
+
+<section class="win assessment" id="s6">
+
+  <div class="tb">
+
+    <span class="tb-title">
+      Assessment.exe - Final Result
+    </span>
+
+    <div class="window-buttons">
+      <span class="wb">_</span>
+      <span class="wb">□</span>
+      <span class="wb">×</span>
+    </div>
+
+  </div>
+
+  <div class="bd">
+
+    <div id="calc">
+
+      <div class="assessment-header">
+        SURVIVOR.EXE // FINAL ASSESSMENT
+      </div>
+
+      <h2>
+        در حال محاسبه‌ی انسانیت…
+      </h2>
+
+      <div class="system-box">
+
+        <div class="logline" id="l1">
+          &gt; SCANNING TOOLSET...
+        </div>
+
+        <div class="logline" id="l2">
+          &gt; ANALYZING SKILLS...
+        </div>
+
+        <div class="logline" id="l3">
+          &gt; MATCHING CHARACTER...
+        </div>
+
+      </div>
+
+      <div class="bar">
+        <i id="cbar"></i>
+      </div>
+
+    </div>
+
+
+    <div id="res" style="display:none">
+
+      <div style="text-align:center">
+
+        <div id="statusChip" class="status">
+          ACCESS GRANTED
+        </div>
+
+        <div class="score-panel" style="margin-top:10px">
+
+          <div class="dim small">
+            HUMANITY SCORE
+          </div>
+
+          <div class="score" id="sc">
+            0 / 15
+          </div>
+
+          <div class="score-percent" id="avg">
+            0%
+          </div>
+
+          <div
+            id="verdict"
+            class="verdict">
+          </div>
+
+          <p
+            id="vmsg"
+            class="dim">
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="data-grid">
+
+        <div class="data-card">
+
+          <div class="label">
+            TOOL
+          </div>
+
+          <div
+            class="name"
+            id="toolName">
+          </div>
+
+          <div
+            class="stars"
+            id="toolStars">
+          </div>
+
+        </div>
+
+
+        <div class="data-card">
+
+          <div class="label">
+            SKILL
+          </div>
+
+          <div
+            class="name"
+            id="skillName">
+          </div>
+
+          <div
+            class="stars"
+            id="skillStars">
+          </div>
+
+        </div>
+
+
+        <div class="data-card">
+
+          <div class="label">
+            CHARACTER
+          </div>
+
+          <div
+            class="name"
+            id="charName">
+          </div>
+
+          <div
+            class="stars"
+            id="charStars">
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="system-result" id="systemMessage"></div>
+
+
+      <div class="result-actions">
+
+        <button
+          class="btn"
+          id="go"
+          style="display:none">
+          CONTINUE →
+        </button>
+
+        <button
+          class="btn"
+          id="retry"
+          style="display:none">
+          TRY AGAIN
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     PAGE 7
+===================================================== -->
+
+<section class="win" id="s7">
+
+  <div class="tb">
+
+    <span class="tb-title">
+      Location.exe - Meeting Point
+    </span>
+
+    <div class="window-buttons">
+      <span class="wb">_</span>
+      <span class="wb">□</span>
+      <span class="wb">×</span>
+    </div>
+
+  </div>
+
+  <div class="bd location">
+
+    <div class="system-head">
+      // 05 / CLASSIFIED LOCATION
+    </div>
+
+    <div class="location-icon">
+      ⌖
+    </div>
+
+    <h1>
+      محل ملاقات
+    </h1>
+
+    <p class="dim">
+      مختصات برای بازمانده‌ی تأییدشده آزاد شد.
+    </p>
+
+    <div class="system-box" style="text-align:right">
+
+      <div class="logline">
+        &gt; HUMANITY: <span class="ok">VERIFIED</span>
+      </div>
+
+      <div class="logline">
+        &gt; ACCESS: <span class="ok">GRANTED</span>
+      </div>
+
+      <div class="logline">
+        &gt; LOCATION: <span class="ok">UNLOCKED</span>
+      </div>
+
+    </div>
+
+    <a
+      id="loc"
+      class="location-link"
+      target="_blank"
+      rel="noopener">
+    </a>
+
+  </div>
+
+</section>
+
+
+</main>
+
+
+<script>
+
+/* =========================================================
+   EDIT THESE
+========================================================= */
+
+const LOCATION_NAME =
+"باز کردن محل ملاقات در گوگل مپس";
+
+const LOCATION_URL =
+"https://maps.google.com/maps/place//data=!4m2!3m1!1s0x3f8dfd670f26d87d:0x8324f1ac3000ee3?entry=s&sa=X&ved=2ahUKEwjLgcmpkamXAxUzcvEDHTuSLTkQ4kB6BAgYEAA&hl=en";
+
+const PASS_PERCENT = 53;
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+const $ = s =>
+document.querySelector(s);
+
+const P = {
+  K:'#1d2b3a',
+  B:'#397b83',
+  L:'#8fd0d8',
+  W:'#ffffff',
+  R:'#c0504d',
+  Y:'#d9a441',
+  G:'#8a949c',
+  N:'#6b4a2f',
+  S:'#e0b58f'
+};
+
+const svg = (r,w=16,h=16) =>
+'<svg viewBox="0 0 '+w+' '+h+'" shape-rendering="crispEdges">'+
+r.map(([x,y,a,b,c]) =>
+'<rect x="'+x+'" y="'+y+'" width="'+a+'" height="'+b+'" fill="'+(P[c]||c)+'"/>'
+).join('')+
+'</svg>';
+
+const star = n =>
+"★".repeat(n)+"☆".repeat(5-n);
+
+const show = id => {
+
+  document
+    .querySelectorAll("main .win")
+    .forEach(w=>w.classList.remove("on"));
+
+  $("#"+id).classList.add("on");
+
+};
+
+
+/* =========================================================
+   CLOCK
+========================================================= */
+
+function updateClock(){
+
+  const now = new Date();
+
+  let h = now.getHours();
+  const m = String(now.getMinutes()).padStart(2,"0");
+
+  const ap = h >= 12 ? "PM" : "AM";
+
+  h = h % 12 || 12;
+
+  $("#clock").textContent =
+    h+":"+m+" "+ap;
+
+}
+
+updateClock();
+
+setInterval(updateClock,30000);
+
+
+/* =========================================================
+   ICONS
+========================================================= */
+
+const IC={
+
+brain:[
+[4,3,8,9,'L'],
+[3,5,10,5,'L'],
+[7,3,1,9,'K'],
+[4,6,3,1,'K'],
+[9,8,3,1,'K'],
+[6,12,4,2,'K']
+],
+
+compass:[
+[4,3,8,10,'G'],
+[3,4,10,8,'G'],
+[5,4,6,8,'W'],
+[4,5,8,6,'W'],
+[7,5,2,3,'R'],
+[7,8,2,3,'K']
+],
+
+power:[
+[7,1,2,1,'G'],
+[4,2,8,12,'K'],
+[5,3,6,10,'B'],
+[6,5,4,2,'L'],
+[6,8,4,2,'L']
+],
+
+camera:[
+[4,3,3,2,'K'],
+[2,5,12,8,'K'],
+[3,6,10,6,'Y'],
+[6,7,4,4,'K'],
+[7,8,2,2,'L'],
+[10,6,2,1,'W']
+],
+
+map:[
+[2,3,12,10,'L'],
+[2,3,12,1,'K'],
+[2,12,12,1,'K'],
+[5,3,1,10,'G'],
+[10,3,1,10,'G'],
+[3,6,2,1,'R'],
+[6,8,3,1,'R'],
+[11,9,2,1,'R']
+],
+
+fan:[
+[2,3,12,2,'R'],
+[3,5,10,2,'R'],
+[4,7,8,2,'R'],
+[6,9,4,1,'R'],
+[7,10,2,5,'N']
+],
+
+hack:[
+[2,3,12,8,'K'],
+[3,4,10,6,'B'],
+[4,5,1,1,'L'],
+[5,6,1,1,'L'],
+[4,7,1,1,'L'],
+[7,8,3,1,'L'],
+[6,11,4,1,'G'],
+[5,12,6,1,'G']
+],
+
+cook:[
+[5,3,1,3,'L'],
+[8,2,1,4,'L'],
+[11,3,1,3,'L'],
+[2,6,12,1,'G'],
+[3,7,10,6,'K'],
+[1,8,2,1,'G'],
+[13,8,2,1,'G']
+],
+
+chip:[
+[4,4,8,8,'K'],
+[5,5,6,6,'B'],
+[6,6,4,4,'L'],
+[3,5,1,1,'G'],
+[3,7,1,1,'G'],
+[3,9,1,1,'G'],
+[12,5,1,1,'G'],
+[12,7,1,1,'G'],
+[12,9,1,1,'G'],
+[5,3,1,1,'G'],
+[7,3,1,1,'G'],
+[9,3,1,1,'G'],
+[5,12,1,1,'G'],
+[7,12,1,1,'G'],
+[9,12,1,1,'G']
+],
+
+hammer:[
+[3,2,9,3,'G'],
+[2,3,1,1,'G'],
+[3,2,9,1,'W'],
+[7,5,2,9,'N']
+],
+
+lie:[
+[2,3,12,8,'L'],
+[2,3,12,1,'K'],
+[2,10,12,1,'K'],
+[3,11,3,2,'L'],
+[4,6,2,2,'K'],
+[7,6,2,2,'K'],
+[10,6,2,2,'K']
+],
+
+panic:[
+[3,3,10,10,'Y'],
+[2,4,12,8,'Y'],
+[5,6,2,2,'K'],
+[9,6,2,2,'K'],
+[7,9,2,3,'K'],
+[13,4,1,2,'L']
+]
+
+};
+
+
+/* =========================================================
+   PIXEL PORTRAITS
+========================================================= */
+
+const SK='#e0b58f';
+const KK='#1d2b3a';
+
+function face(o){
+
+  const r=[
+    [0,0,16,20,'#9fb7bb']
+  ].concat(
+    o.back||[],
+    [
+      [2,15,12,5,o.sh],
+      [7,13,2,2,'#c99a74'],
+      [5,5,6,8,SK],
+      [4,6,8,6,SK]
+    ],
+    o.feat||[],
+    [
+      [6,8,1,1,KK],
+      [9,8,1,1,KK],
+      [7,11,2,1,'#9b4a3c']
+    ],
+    o.front||[],
+    o.ext||[]
+  );
+
+  return svg(r,16,20);
+
+}
+
+
+/* =========================================================
+   CHARACTERS
+========================================================= */
+
+const CH=[
+
+[
+"لارا کرافت",
+4,
+"ظاهراً نفوذ به خرابه‌های باستانی تمرین خوبی بود.",
+"images/lara.jpg",
+{
+sh:'#2a9d8f',
+front:[
+[4,3,8,3,'#5a3a22'],
+[3,4,2,5,'#5a3a22'],
+[11,4,2,4,'#5a3a22'],
+[12,8,2,3,'#5a3a22'],
+[13,11,1,4,'#5a3a22']
+],
+ext:[
+[3,15,1,5,KK],
+[12,15,1,5,KK]
+]
+}
+],
+
+[
+"دریل دیکسون",
+5,
+"لعنتی. کمان پولادی به ربات‌ها آسیب نمی‌زنه.",
+"images/daryl.jpg",
+{
+sh:'#3d3d3d',
+feat:[[5,11,6,2,'#8a6a52']],
+front:[
+[4,3,8,3,'#3b2a1e'],
+[3,4,2,6,'#3b2a1e'],
+[11,4,2,6,'#3b2a1e']
+],
+ext:[
+[1,15,14,1,KK],
+[1,14,1,3,KK],
+[14,14,1,3,KK],
+[6,15,4,5,P.N]
+]
+}
+],
+
+[
+"آرتور مورگان",
+4,
+"حداقل یه اسب رباتی بهم بدین.",
+"images/arthur.jpg",
+{
+sh:'#6b4a2f',
+feat:[
+[3,5,2,4,'#7a5a3a'],
+[11,5,2,4,'#7a5a3a'],
+[6,10,4,1,'#7a5a3a']
+],
+front:[
+[2,4,12,1,'#3a2817'],
+[4,2,8,3,'#3a2817']
+],
+ext:[
+[6,13,4,2,P.R]
+]
+}
+],
+
+[
+"الی ویلیامز",
+5,
+"کامپیوترها هم آلوده شدن.",
+"images/ellie.jpg",
+{
+sh:'#7d9a5f',
+back:[[12,3,3,8,'#6b3f22']],
+front:[
+[4,3,8,3,'#6b3f22'],
+[3,4,2,6,'#6b3f22'],
+[11,4,2,3,'#6b3f22']
+],
+ext:[
+[4,15,1,5,'#3a2817'],
+[11,15,1,5,'#3a2817']
+]
+}
+],
+
+[
+"ریچل گرین",
+3,
+"لباس مناسب این آخرالزمان رو ندارم.",
+"images/rachel.jpg",
+{
+sh:'#8b3a4a',
+back:[[3,4,10,13,'#d9b45a']],
+front:[
+[4,3,8,3,'#d9b45a'],
+[5,5,6,1,'#d9b45a']
+],
+ext:[
+[11,16,3,4,'W'],
+[11,16,3,1,P.N]
+]
+}
+],
+
+[
+"دوایت شرات",
+3,
+"من برای دقیقاً همین سناریو آماده شده بودم.",
+"images/dwight.jpg",
+{
+sh:'#c9a227',
+feat:[],
+front:[
+[4,3,8,2,'#4a3320'],
+[4,5,1,2,'#4a3320'],
+[11,5,1,2,'#4a3320'],
+[5,8,3,1,KK],
+[8,8,3,1,KK]
+],
+ext:[
+[7,15,2,5,'#6b3a2a'],
+[6,14,1,2,'W'],
+[9,14,1,2,'W']
+]
+}
+]
+
+];
+
+
+/* =========================================================
+   CITY
+========================================================= */
+
+let city =
+'<rect width="200" height="90" fill="#1b2a35"/>';
+
+[
+[6,45,14],
+[24,28,12],
+[40,50,16],
+[60,22,10],
+[74,52,18],
+[98,18,14],
+[150,36,14],
+[168,48,12],
+[182,30,18]
+].forEach(b=>{
+
+  city+=
+  '<rect x="'+b[0]+'" y="'+b[1]+'" width="'+b[2]+'" height="'+(90-b[1])+'" fill="#0f1a22"/>';
+
+});
+
+city+=
+'<rect x="124" y="30" width="10" height="26" fill="#2c3d4a"/>'+
+'<rect x="126" y="22" width="6" height="7" fill="#2c3d4a"/>'+
+'<rect x="120" y="32" width="4" height="20" fill="#2c3d4a"/>'+
+'<rect x="134" y="32" width="4" height="20" fill="#2c3d4a"/>'+
+'<rect x="125" y="56" width="3" height="20" fill="#2c3d4a"/>'+
+'<rect x="131" y="56" width="3" height="20" fill="#2c3d4a"/>'+
+'<rect x="128" y="25" width="2" height="2" fill="#c0504d"/>';
+
+$("#city").innerHTML=city;
+
+
+/* =========================================================
+   PAGE 0 LOGIC
+========================================================= */
+
+let hp=null;
+
+$("#robot").onclick=()=>{
+
+  $("#rbox").classList.add("checked");
+
+  setTimeout(()=>{
+
+    $("#p0a").style.display="none";
+    $("#p0b").style.display="block";
+
+  },400);
+
+};
+
+
+document
+.querySelectorAll(".face")
+.forEach(c=>{
+
+  c.onclick=()=>{
+
+    document
+    .querySelectorAll(".face")
+    .forEach(x=>x.classList.remove("sel"));
+
+    c.classList.add("sel");
+
+    hp=c.dataset.h;
+
+    $("#verify").disabled=false;
+
+    $("#p0m").textContent="";
+
+  };
+
+});
+
+
+$("#verify").onclick=()=>{
+
+  if(hp!=="1"){
+
+    $("#p0m").textContent=
+      "اون یکی شبیه ماشینه. دوباره امتحان کن.";
+
+    const b=$("#p0b");
+
+    b.classList.remove("shake");
+
+    void b.offsetWidth;
+
+    b.classList.add("shake");
+
+    return;
+
+  }
+
+  $("#p0b").style.display="none";
+  $("#p0c").style.display="block";
+
+  requestAnimationFrame(()=>{
+    $("#p0bar").style.width="100%";
+  });
+
+  setTimeout(()=>{
+
+    $("#p0c").style.display="none";
+    $("#p0d").style.display="block";
+
+    setTimeout(()=>{
+      show("s1");
+    },1400);
+
+  },2300);
+
+};
+
+
+/* =========================================================
+   PAGE 1
+========================================================= */
+
+document
+.querySelectorAll("[data-next]")
+.forEach(b=>{
+  b.onclick=()=>show("s2");
+});
+
+
+/* =========================================================
+   PAGE 2
+========================================================= */
+
+let ip=false;
+
+[
+"متفکر",
+"سازنده",
+"غیرقابل‌پیش‌بینی",
+"انسان‌دوست"
+].forEach(t=>{
+
+  const b=document.createElement("button");
+
+  b.className="row";
+
+  b.innerHTML=
+    '<span class="cb"></span>'+
+    '<b>'+t+'</b>';
+
+  b.onclick=()=>{
+
+    document
+    .querySelectorAll("#ident .row")
+    .forEach(x=>x.classList.remove("sel"));
+
+    b.classList.add("sel");
+
+    ip=true;
+
+    checkIdentity();
+
+  };
+
+  $("#ident").appendChild(b);
+
+});
+
+
+function checkIdentity(){
+
+  $("#n2").disabled=
+    !(ip && $("#nm").value.trim());
+
+}
+
+$("#nm").oninput=checkIdentity;
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+const S={
+  name:"",
+  tool:0,
+  skill:0,
+  char:0,
+  toolName:"",
+  skillName:"",
+  charName:""
+};
+
+
+/* =========================================================
+   BUILD OPTIONS
+========================================================= */
+
+function build(gid,data,key,btn,next,mode){
+
+  const g=$("#"+gid);
+
+  data.forEach(d=>{
+
+    const b=document.createElement("button");
+
+    const rv=
+      '<div class="rv">'+
+      '<div class="st">'+star(d[1])+'</div>'+
+      '<div>'+d[2]+'</div>'+
+      '</div>';
+
+
+    if(mode==="row"){
+
+      b.className="row";
+
+      b.innerHTML=
+        '<span class="cb"></span>'+
+        '<span class="ic">'+
+          svg(IC[d[3]])+
+        '</span>'+
+        '<b>'+d[0]+'</b>'+
+        rv;
+
+    }else{
+
+      b.className="ch";
+
+      b.innerHTML=
+        '<div class="pt">'+
+          face(d[4])+
+          '<img src="'+d[3]+'" alt="'+d[0]+'" onerror="this.remove()">'+
+        '</div>'+
+        '<div class="n">'+d[0]+'</div>'+
+        rv;
+
+    }
+
+
+    b.onclick=()=>{
+
+      g
+      .querySelectorAll("button")
+      .forEach(x=>x.classList.remove("sel"));
+
+      b.classList.add("sel");
+
+      S[key]=d[1];
+
+      if(key==="tool"){
+        S.toolName=d[0];
+      }
+
+      if(key==="skill"){
+        S.skillName=d[0];
+      }
+
+      if(key==="char"){
+        S.charName=d[0];
+      }
+
+      $("#"+btn).disabled=false;
+
+    };
+
+    g.appendChild(b);
+
+  });
+
+
+  $("#"+btn).onclick=()=>{
+
+    show(next);
+
+    if(next==="s6"){
+      assess();
+    }
+
+  };
+
+}
+
+
+/* =========================================================
+   BUILD TOOL PAGE
+========================================================= */
+
+build(
+"g3",
+[
+[
+"مغز انسان",
+5,
+"بدون باتری. بدون وای‌فای.",
+"brain"
+],
+[
+"قطب‌نما",
+4,
+"بدون اینترنت عالی کار می‌کنه. برخلاف بیشتر آدم‌ها.",
+"compass"
+],
+[
+"پاوربانک",
+4,
+"بشریت رو آنلاین نگه می‌داره، یک درصد یک درصد.",
+"power"
+],
+[
+"دوربین یک‌بارمصرف",
+2,
+"هیچ الگوریتمی تصمیم نمی‌گیره چی یادت بمونه.",
+"camera"
+],
+[
+"نقشه‌ی کاغذی",
+2,
+"اگه گوگل مپس به طرف مقابل ملحق شد.",
+"map"
+],
+[
+"بادبزن دستی",
+1,
+"جدی می‌گی داداش؟",
+"fan"
+]
+],
+"tool",
+"n3",
+"s4",
+"row"
+);
+
+
+/* =========================================================
+   BUILD SKILL PAGE
+========================================================= */
+
+build(
+"g4",
+[
+[
+"هک",
+5,
+"معلوم شد کامپیوتر بلد بودن به دردبخوره. ولی کامپیوتری که فکر می‌کنه باحال‌تره.",
+"hack"
+],
+[
+"آشپزی",
+4,
+"چون یکی باید به مقاومت غذا بده.",
+"cook"
+],
+[
+"حافظه",
+4,
+"وقتی ماشین‌ها شروع به پاک کردن چیزها کنن به کار میاد.",
+"chip"
+],
+[
+"تعمیرکاری",
+3,
+"تو خرابش کردی، تو درستش می‌کنی، زنده می‌مونی.",
+"hammer"
+],
+[
+"دروغ گفتن",
+2,
+"برای وقتی که ماشین‌ها شروع به سؤال پرسیدن کنن.",
+"lie"
+],
+[
+"وحشت کردن",
+1,
+"به درد نمی‌خوره، ولی خیلی انسانیه.",
+"panic"
+]
+],
+"skill",
+"n4",
+"s5",
+"row"
+);
+
+
+/* =========================================================
+   BUILD CHARACTER PAGE
+========================================================= */
+
+build(
+"g5",
+CH,
+"char",
+"n5",
+"s6",
+"char"
+);
+
+
+/* =========================================================
+   ASSESSMENT
+========================================================= */
+
+function assess(){
+
+  $("#calc").style.display="block";
+  $("#res").style.display="none";
+
+  $("#cbar").style.width="0";
+
+  [
+    "#l1",
+    "#l2",
+    "#l3"
+  ].forEach(s=>{
+    $(s).textContent=
+      $(s).textContent.replace(" ✓","");
+  });
+
+  requestAnimationFrame(()=>{
+    $("#cbar").style.width="100%";
+  });
+
+  setTimeout(()=>{
+    $("#l1").innerHTML=
+      '&gt; SCANNING TOOLSET... <span class="ok">✓</span>';
+  },600);
+
+  setTimeout(()=>{
+    $("#l2").innerHTML=
+      '&gt; ANALYZING SKILLS... <span class="ok">✓</span>';
+  },1200);
+
+  setTimeout(()=>{
+    $("#l3").innerHTML=
+      '&gt; MATCHING CHARACTER... <span class="ok">✓</span>';
+  },1800);
+
+  setTimeout(result,2600);
+
+}
+
+
+/* =========================================================
+   RESULT
+========================================================= */
+
+function result(){
+
+  const total=
+    S.tool+
+    S.skill+
+    S.char;
+
+  const pct=
+    total/15*100;
+
+  const ok=
+    pct>=PASS_PERCENT;
+
+
+  $("#calc").style.display="none";
+  $("#res").style.display="block";
+
+
+  $("#sc").textContent=
+    total+" / 15";
+
+  $("#avg").textContent=
+    (t=>t.toFixed(1))(total/3)+
+    " / 5  ·  "+
+    pct.toFixed(1)+
+    "%";
+
+
+  $("#toolName").textContent=S.toolName;
+  $("#skillName").textContent=S.skillName;
+  $("#charName").textContent=S.charName;
+
+  $("#toolStars").textContent=star(S.tool);
+  $("#skillStars").textContent=star(S.skill);
+  $("#charStars").textContent=star(S.char);
+
+
+  const v=$("#verdict");
+  const chip=$("#statusChip");
+
+
+  if(ok){
+
+    chip.textContent="ACCESS GRANTED";
+    chip.classList.remove("fail");
+
+    v.textContent="قبول شدی.";
+    v.classList.remove("no");
+
+    $("#vmsg").textContent=
+      "تبریک"+
+      (S.name ? "، "+S.name : "")+
+      ". درخواستت تأیید شد.";
+
+    $("#systemMessage").innerHTML=
+      "&gt; HUMANITY CHECK: "+
+      '<span class="ok">PASSED</span><br>'+
+      "&gt; SURVIVAL PROFILE: "+
+      '<span class="ok">ACCEPTABLE</span><br>'+
+      "&gt; ACCESS: "+
+      '<span class="ok">GRANTED</span>';
+
+    $("#go").style.display="inline-block";
+    $("#retry").style.display="none";
+
+  }else{
+
+    chip.textContent="ACCESS DENIED";
+    chip.classList.add("fail");
+
+    v.textContent="درخواستت رد شد.";
+    v.classList.add("no");
+
+    $("#vmsg").textContent=
+      "ویژگی‌های انسانی کافی پیدا نشد.";
+
+    $("#systemMessage").innerHTML=
+      "&gt; HUMANITY CHECK: "+
+      '<span class="no">FAILED</span><br>'+
+      "&gt; SURVIVAL PROFILE: "+
+      '<span class="no">INSUFFICIENT</span><br>'+
+      "&gt; ACCESS: "+
+      '<span class="no">DENIED</span>';
+
+    $("#go").style.display="none";
+    $("#retry").style.display="inline-block";
+
+  }
+
+}
+
+
+/* =========================================================
+   CONTINUE / RETRY
+========================================================= */
+
+$("#go").onclick=()=>{
+  show("s7");
+};
+
+
+$("#retry").onclick=()=>{
+
+  document
+  .querySelectorAll(
+    "#g3 .sel,#g4 .sel,#g5 .sel"
+  )
+  .forEach(x=>x.classList.remove("sel"));
+
+  [
+    "n3",
+    "n4",
+    "n5"
+  ].forEach(i=>{
+    $("#"+i).disabled=true;
+  });
+
+  S.tool=0;
+  S.skill=0;
+  S.char=0;
+
+  S.toolName="";
+  S.skillName="";
+  S.charName="";
+
+  show("s3");
+
+};
+
+
+/* =========================================================
+   LOCATION
+========================================================= */
+
+$("#loc").textContent=
+  LOCATION_NAME;
+
+$("#loc").href=
+  LOCATION_URL;
+
+</script>
+
+</body>
+</html>
